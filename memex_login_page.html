@@ -1,0 +1,495 @@
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+body{
+  background:#0a0a0f;
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:stretch;
+}
+.split-left{
+  width:42%;
+  background:#0e0e17;
+  border-right:0.5px solid rgba(124,111,255,0.12);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:2.5rem;
+  position:relative;
+  overflow:hidden;
+}
+.glow-orb{
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.orb1{width:320px;height:320px;background:rgba(124,111,255,0.08);top:-60px;left:-80px;}
+.orb2{width:200px;height:200px;background:rgba(56,232,160,0.05);bottom:80px;right:-40px;}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;
+  color:#f0eeff;letter-spacing:-0.02em;
+  position:relative;z-index:1;
+}
+.brand-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#38e8a0;
+}
+.brand span{color:#7c6fff}
+.left-middle{position:relative;z-index:1}
+.left-middle h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:2rem;letter-spacing:-0.03em;
+  color:#f0eeff;line-height:1.2;margin-bottom:1rem;
+}
+.left-middle h2 em{color:#7c6fff;font-style:normal}
+.left-middle p{
+  font-size:0.9rem;color:#5f5b70;line-height:1.7;max-width:280px;
+}
+.feature-list{
+  list-style:none;display:flex;flex-direction:column;gap:0.75rem;
+  margin-top:1.75rem;
+}
+.feature-list li{
+  display:flex;align-items:center;gap:10px;
+  font-size:0.8125rem;color:#7a7590;
+}
+.feat-check{
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(56,232,160,0.12);border:0.5px solid rgba(56,232,160,0.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.feat-check svg{width:9px;height:9px;stroke:#38e8a0;stroke-width:2.5;fill:none}
+.terminal{
+  background:#0a0a0f;
+  border:0.5px solid rgba(124,111,255,0.15);
+  border-radius:10px;padding:1rem 1.25rem;
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  line-height:1.8;color:#4a475e;
+  position:relative;z-index:1;
+}
+.t-bar{display:flex;gap:6px;margin-bottom:0.75rem}
+.t-dot{width:8px;height:8px;border-radius:50%}
+.t-dot:nth-child(1){background:#3a3a3a}
+.t-dot:nth-child(2){background:#3a3a3a}
+.t-dot:nth-child(3){background:#3a3a3a}
+.t-kw{color:#7c6fff}
+.t-str{color:#38e8a0}
+.t-dim{color:#2e2c3a}
+.split-right{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:2.5rem;
+}
+.login-card{
+  width:100%;max-width:400px;
+}
+.login-card h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.75rem;letter-spacing:-0.025em;
+  color:#f0eeff;margin-bottom:0.375rem;
+}
+.login-card .sub{
+  font-size:0.875rem;color:#5f5b70;margin-bottom:2rem;
+}
+.login-card .sub a{color:#7c6fff;text-decoration:none}
+.login-card .sub a:hover{text-decoration:underline}
+.field{margin-bottom:1.125rem}
+.field label{
+  display:block;font-size:0.75rem;font-weight:500;
+  color:#7a7590;letter-spacing:0.04em;text-transform:uppercase;
+  margin-bottom:0.4rem;
+}
+.input-wrap{position:relative}
+.input-wrap i{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  font-size:16px;color:#3d3a50;pointer-events:none;
+}
+.input-wrap input{
+  width:100%;
+  background:#13131a;
+  border:0.5px solid rgba(124,111,255,0.18);
+  border-radius:10px;
+  padding:0.75rem 0.875rem 0.75rem 2.5rem;
+  font-family:'DM Sans',sans-serif;font-size:0.9375rem;
+  color:#f0eeff;
+  outline:none;
+  transition:border-color 0.2s;
+}
+.input-wrap input::placeholder{color:#2e2c3a}
+.input-wrap input:focus{border-color:rgba(124,111,255,0.5)}
+.input-wrap .eye{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  font-size:16px;color:#3d3a50;cursor:pointer;left:auto;
+  transition:color 0.2s;
+}
+.input-wrap .eye:hover{color:#7c6fff}
+.forgot{
+  text-align:right;font-size:0.75rem;
+  color:#7c6fff;text-decoration:none;
+  display:block;margin-top:-0.5rem;margin-bottom:1.25rem;
+}
+.forgot:hover{text-decoration:underline}
+.btn-login{
+  width:100%;background:#7c6fff;color:#fff;
+  border:none;border-radius:10px;
+  padding:0.875rem;
+  font-family:'DM Sans',sans-serif;font-size:0.9375rem;font-weight:500;
+  cursor:pointer;
+  transition:opacity 0.2s,transform 0.15s;
+  letter-spacing:0.01em;
+  margin-bottom:1.25rem;
+}
+.btn-login:hover{opacity:0.88;transform:translateY(-1px)}
+.btn-login:active{transform:scale(0.99)}
+/* Signup button styles */
+.btn-signup-inline{
+  background:transparent;color:#7c6fff;border:none;padding:0;margin:0;
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:600;cursor:pointer;
+}
+.btn-signup-inline:hover{text-decoration:underline}
+.btn-signup-link{
+  background:transparent;color:#7c6fff;border:none;padding:0;margin:0;font-weight:600;cursor:pointer;
+}
+.btn-signup-link:hover{text-decoration:underline}
+.divider-row{
+  display:flex;align-items:center;gap:1rem;
+  margin-bottom:1.25rem;
+}
+.divider-row hr{flex:1;border:none;border-top:0.5px solid rgba(255,255,255,0.07)}
+.divider-row span{font-size:0.75rem;color:#3d3a50;white-space:nowrap}
+.social-btns{display:flex;gap:0.75rem;margin-bottom:2rem}
+.btn-social{
+  flex:1;background:#13131a;
+  border:0.5px solid rgba(255,255,255,0.1);
+  border-radius:10px;padding:0.7rem;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.8125rem;color:#9b97b0;
+  cursor:pointer;transition:border-color 0.2s,color 0.2s;
+}
+.btn-social:hover{border-color:rgba(124,111,255,0.35);color:#f0eeff}
+.btn-social svg{width:16px;height:16px;flex-shrink:0}
+.signup-row{
+  text-align:center;font-size:0.8125rem;color:#3d3a50;
+}
+.signup-row a{color:#7c6fff;text-decoration:none}
+.signup-row a:hover{text-decoration:underline}
+.remember-row{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:1.25rem;
+}
+.remember-row input[type=checkbox]{
+  width:16px;height:16px;accent-color:#7c6fff;cursor:pointer;
+}
+.remember-row label{font-size:0.8125rem;color:#5f5b70;cursor:pointer}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">LLM Bridge login page with email and password fields</h2>
+
+<div style="display:flex;min-height:640px;width:100%">
+
+  <div class="split-left">
+    <div class="glow-orb orb1"></div>
+    <div class="glow-orb orb2"></div>
+
+    <div class="brand">
+      <div class="brand-dot"></div>
+      LLM Bridge
+    </div>
+
+    <div class="left-middle">
+      <h2>Your chats.<br><em>Your memory.</em><br>Your machine.</h2>
+      <p>The AI memory layer that runs entirely on your hardware. No cloud, no keys, no leaks.</p>
+      <ul class="feature-list">
+        <li>
+          <span class="feat-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,6.5 9,1"/></svg></span>
+          100% local — Llama 3.2 via Ollama
+        </li>
+        <li>
+          <span class="feat-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,6.5 9,1"/></svg></span>
+          Chunked summarization, any length
+        </li>
+        <li>
+          <span class="feat-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,6.5 9,1"/></svg></span>
+          Works on ChatGPT, Claude & Gemini
+        </li>
+        <li>
+          <span class="feat-check"><svg viewBox="0 0 10 8"><polyline points="1,4 3.5,6.5 9,1"/></svg></span>
+          Open source, MIT licensed
+        </li>
+      </ul>
+    </div>
+
+    <div class="terminal">
+      <div class="t-bar"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div>
+      <div><span class="t-kw">const</span> summary = <span class="t-kw">await</span> summarize(chat);</div>
+      <div class="t-dim">// chunking 3,847 words...</div>
+      <div><span class="t-str">→ "User built a k8s cluster with..."</span></div>
+    </div>
+  </div>
+
+  <div class="split-right">
+    <div class="login-card">
+      <h1>Welcome back</h1>
+      <p class="sub">No account? <button class="btn-signup-inline">Sign up free</button></p>
+
+      <div id="loggedInUser" style="display:none;background:rgba(124,111,255,0.08);border:0.5px solid rgba(124,111,255,0.2);border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:0.875rem">
+        <div style="color:#7a7590;margin-bottom:0.5rem">Currently signed in as:</div>
+        <div style="color:#f0eeff;margin-bottom:0.75rem" id="currentUserEmail"></div>
+        <button id="switchAccountBtn" style="width:100%;background:transparent;color:#7c6fff;border:0.5px solid rgba(124,111,255,0.3);border-radius:8px;padding:0.5rem;font-size:0.875rem;cursor:pointer;transition:all 0.2s">Switch account</button>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <div class="input-wrap">
+          <i class="ti ti-mail" aria-hidden="true"></i>
+          <input type="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <i class="ti ti-lock" aria-hidden="true"></i>
+          <input type="password" placeholder="••••••••••" id="pwd" autocomplete="current-password">
+          <i class="ti ti-eye eye" aria-hidden="true" id="togglePwd"></i>
+        </div>
+      </div>
+
+      <div class="remember-row">
+        <input type="checkbox" id="remember">
+        <label for="remember">Remember me for 30 days</label>
+      </div>
+
+      <a href="#" class="forgot">Forgot password?</a>
+
+      <button class="btn-login">Sign in to LLM Bridge</button>
+
+      <div class="divider-row">
+        <hr><span>or continue with</span><hr>
+      </div>
+
+      <div class="social-btns">
+        <button class="btn-social">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 6.56 17.44M12 2v10l4 4"/></svg>
+          Google
+        </button>
+        <button class="btn-social">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.341-3.369-1.341-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          GitHub
+        </button>
+      </div>
+
+      <div class="signup-row">
+        New to LLM Bridge? <button class="btn-signup-link">Create an account →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const t = document.getElementById('togglePwd');
+const p = document.getElementById('pwd');
+if(t && p){
+  t.addEventListener('click', () => {
+    const show = p.type === 'password';
+    p.type = show ? 'text' : 'password';
+    t.className = show ? 'ti ti-eye-off eye' : 'ti ti-eye eye';
+  });
+}
+</script>
+<!-- Firebase config (create/replace firebase-config.js in this folder) -->
+<script src="firebase-config.js"></script>
+<!-- Firebase compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+<script>
+(() => {
+  if (!window.__FIREBASE_CONFIG) {
+    console.warn('firebase-config.js not found or not configured. Create it and add window.__FIREBASE_CONFIG.');
+    return;
+  }
+  if (!firebase.apps.length) {
+    firebase.initializeApp(window.__FIREBASE_CONFIG);
+  }
+  // Persist auth state across sessions (LOCAL)
+  try{ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){ console.warn('setPersistence failed', e); }
+  
+
+  const emailInput = () => document.querySelector('input[type="email"]');
+  const pwdInput = () => document.getElementById('pwd');
+  let _popupInProgress = false;
+
+  function showError(msg){
+    // simple inline error display
+    let el = document.querySelector('.auth-error');
+    if(!el){
+      el = document.createElement('div');
+      el.className = 'auth-error';
+      el.style.color = '#ff6b6b';
+      el.style.marginBottom = '0.75rem';
+      const container = document.querySelector('.login-card');
+      container.insertBefore(el, container.querySelector('.remember-row'));
+    }
+    el.textContent = msg;
+  }
+
+  function clearError(){
+    const el = document.querySelector('.auth-error');
+    if(el) el.remove();
+  }
+
+  function signUpWithEmail(){
+    clearError();
+    const email = (emailInput() && emailInput().value) || '';
+    const pwd = (pwdInput() && pwdInput().value) || '';
+    if(!email || !pwd){ showError('Please provide email and password.'); return; }
+    firebase.auth().createUserWithEmailAndPassword(email, pwd)
+      .then((userCred)=>{
+        // send verification email
+        userCred.user.sendEmailVerification()
+          .then(()=>{
+            showError('Verification email sent. Please check your inbox.');
+            // keep user on login page so they can verify
+          })
+          .catch(e=>{ showError('Signed up but failed to send verification: ' + (e.message||e)); });
+      })
+      .catch(e=>{ showError(e.message || 'Sign up failed'); });
+  }
+
+  function signInWithEmail(){
+    clearError();
+    const email = (emailInput() && emailInput().value) || '';
+    const pwd = (pwdInput() && pwdInput().value) || '';
+    if(!email || !pwd){ showError('Please enter email and password.'); return; }
+    firebase.auth().signInWithEmailAndPassword(email, pwd)
+      .then((userCred)=>{
+        if(userCred.user && !userCred.user.emailVerified){
+          showError('Email not verified. Please check your inbox or resend verification.');
+        }
+        window.location.href = 'memex_ai_extension_landing_page%20(1).html';
+      })
+      .catch(e=>{ showError(e.message || 'Sign in failed'); });
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const s1 = document.querySelector('.btn-signup-inline');
+    const s2 = document.querySelector('.btn-signup-link');
+    const btnLogin = document.querySelector('.btn-login');
+    const loggedInUserDiv = document.querySelector('#loggedInUser');
+    const currentUserEmailEl = document.querySelector('#currentUserEmail');
+    const switchAccountBtn = document.querySelector('#switchAccountBtn');
+    
+    if(s1) s1.addEventListener('click', signUpWithEmail);
+    if(s2) s2.addEventListener('click', signUpWithEmail);
+    if(btnLogin) btnLogin.addEventListener('click', signInWithEmail);
+
+    // Handle switch account - clear form and logout
+    if(switchAccountBtn){
+      switchAccountBtn.addEventListener('click', ()=>{
+        clearError();
+        firebase.auth().signOut().then(()=>{
+          // Clear form fields
+          if(emailInput()) emailInput().value = '';
+          if(pwdInput()) pwdInput().value = '';
+          loggedInUserDiv.style.display = 'none';
+        }).catch(e=>{ showError('Failed to sign out: ' + e.message); });
+      });
+    }
+
+    // Social sign-in handlers (use first .btn-social = Google, second = GitHub)
+    function googleSignIn(){
+      clearError();
+      if(_popupInProgress){ showError('A sign-in popup is already open. Please complete it or close it before retrying.'); return; }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      _popupInProgress = true;
+      if(socialBtns && socialBtns.length){ socialBtns.forEach(b=>b.disabled = true); }
+      firebase.auth().signInWithPopup(provider)
+        .then(()=>{ window.location.href = 'memex_ai_extension_landing_page%20(1).html'; })
+        .catch(e=>{
+          // If another popup was opened or blocked, fallback to redirect flow
+          if(e && (e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user')){
+            showError('Popup was blocked or cancelled; falling back to redirect flow.');
+            firebase.auth().signInWithRedirect(provider);
+            return;
+          }
+          showError(e.message || 'Google sign-in failed');
+        })
+        .finally(()=>{ _popupInProgress = false; if(socialBtns && socialBtns.length){ socialBtns.forEach(b=>b.disabled = false); } });
+    }
+
+    function githubSignIn(){
+      clearError();
+      if(_popupInProgress){ showError('A sign-in popup is already open. Please complete it or close it before retrying.'); return; }
+      const provider = new firebase.auth.GithubAuthProvider();
+      _popupInProgress = true;
+      if(socialBtns && socialBtns.length){ socialBtns.forEach(b=>b.disabled = true); }
+      // Make sure GitHub provider is enabled in Firebase Console and GitHub OAuth app is configured
+      firebase.auth().signInWithPopup(provider)
+        .then(()=>{ window.location.href = 'memex_ai_extension_landing_page%20(1).html'; })
+        .catch(e=>{
+          if(e && (e.code === 'auth/cancelled-popup-request' || e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user')){
+            showError('Popup was blocked or cancelled; falling back to redirect flow.');
+            firebase.auth().signInWithRedirect(provider);
+            return;
+          }
+          showError(e.message || 'GitHub sign-in failed');
+        })
+        .finally(()=>{ _popupInProgress = false; if(socialBtns && socialBtns.length){ socialBtns.forEach(b=>b.disabled = false); } });
+    }
+
+    const socialBtns = document.querySelectorAll('.btn-social');
+    if(socialBtns && socialBtns.length){
+      if(socialBtns[0]) socialBtns[0].addEventListener('click', googleSignIn);
+      if(socialBtns[1]) socialBtns[1].addEventListener('click', githubSignIn);
+    }
+
+    // Forgot / reset password handler
+    const forgot = document.querySelector('.forgot');
+    if(forgot){
+      forgot.addEventListener('click', (e)=>{
+        e.preventDefault();
+        clearError();
+        const email = (emailInput() && emailInput().value) || '';
+        if(!email){ showError('Enter your email above to receive a password reset link.'); return; }
+        firebase.auth().sendPasswordResetEmail(email)
+          .then(()=>{ showError('Password reset email sent. Check your inbox.'); })
+          .catch(e=>{ showError(e.message || 'Failed to send reset email'); });
+      });
+    }
+
+    // Optional: update UI based on auth state (redirect away if already logged in)
+    firebase.auth().onAuthStateChanged(user => {
+      const loggedInUserDiv = document.querySelector('#loggedInUser');
+      const currentUserEmailEl = document.querySelector('#currentUserEmail');
+      
+      if(user && loggedInUserDiv && currentUserEmailEl){
+        // Show the "currently logged in" banner
+        loggedInUserDiv.style.display = 'block';
+        currentUserEmailEl.textContent = user.email || 'User';
+      } else if(loggedInUserDiv) {
+        // Hide if no user logged in
+        loggedInUserDiv.style.display = 'none';
+      }
+    });
+    // If we used signInWithRedirect fallback, handle the redirect result here
+    firebase.auth().getRedirectResult()
+      .then(result => {
+        if(result && result.user){
+          window.location.href = 'memex_ai_extension_landing_page%20(1).html';
+        }
+      })
+      .catch(e => {
+        // Ignore cancelled popup fallback errors; show other errors
+        if(e && e.code && e.code !== 'auth/cancelled-popup-request'){
+          showError(e.message || 'Redirect sign-in failed');
+        }
+      });
+  });
+})();
+</script>

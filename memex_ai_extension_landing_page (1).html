@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Bridge — Transfer & Summarize AI Conversations</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;
+  --surface:#13131a;
+  --surface2:#1c1c27;
+  --accent:#7c6fff;
+  --accent2:#38e8a0;
+  --text:#f0eeff;
+  --muted:#6b6880;
+  --border:rgba(124,111,255,0.15);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;
+  background:rgba(10,10,15,0.85);
+  backdrop-filter:blur(16px);
+  border-bottom:0.5px solid var(--border);
+}
+.logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;
+  color:var(--text);letter-spacing:-0.02em;
+}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.875rem;transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:var(--accent);color:#fff;border:none;
+  padding:0.5rem 1.25rem;border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;
+  cursor:pointer;transition:opacity 0.2s;
+}
+.nav-cta:hover{opacity:0.85}
+/* Signup / Logout buttons for header */
+.btn-signup{
+  background:var(--accent);color:#fff;border:none;
+  padding:0.5rem 1rem;border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;
+  cursor:pointer;transition:opacity 0.2s;
+}
+.btn-signup:hover{opacity:0.9}
+.btn-logout{
+  background:#e63946;color:#fff;border:none;
+  padding:0.5rem 1rem;border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;
+  cursor:pointer;transition:opacity 0.15s;
+}
+.btn-logout:hover{opacity:0.9}
+
+/* Header profile avatar */
+.user-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.03);display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:var(--text);overflow:hidden}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:7rem 2rem 4rem;
+  position:relative;
+  overflow:hidden;
+}
+.hero-glow{
+  position:absolute;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(124,111,255,0.12) 0%, transparent 70%);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hero-glow2{
+  position:absolute;
+  width:400px;height:400px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(56,232,160,0.07) 0%, transparent 70%);
+  top:30%;right:10%;
+  pointer-events:none;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(124,111,255,0.1);border:0.5px solid rgba(124,111,255,0.3);
+  border-radius:999px;padding:0.375rem 1rem;
+  font-size:0.75rem;color:var(--accent);font-weight:500;
+  margin-bottom:1.5rem;letter-spacing:0.05em;text-transform:uppercase;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2.5rem,6vw,4.5rem);
+  line-height:1.1;letter-spacing:-0.03em;
+  max-width:780px;
+}
+h1 .accent{color:var(--accent)}
+h1 .accent2{color:var(--accent2)}
+.hero-sub{
+  font-size:1.125rem;color:var(--muted);
+  max-width:520px;margin:1.5rem auto 2.5rem;
+  font-weight:300;line-height:1.7;
+}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:var(--accent);color:#fff;
+  border:none;padding:0.875rem 2rem;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;
+  cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,111,255,0.35)}
+.btn-ghost{
+  background:transparent;color:var(--text);
+  border:0.5px solid rgba(255,255,255,0.15);
+  padding:0.875rem 2rem;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:400;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.04)}
+
+/* DEMO WINDOW */
+.demo-wrap{
+  margin:4rem auto 0;max-width:760px;width:100%;
+  position:relative;
+}
+.demo-window{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:16px;overflow:hidden;
+}
+.demo-bar{
+  background:var(--surface2);
+  padding:0.75rem 1rem;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:0.5px solid var(--border);
+}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.demo-dot:nth-child(1){background:#ff5f57}
+.demo-dot:nth-child(2){background:#febc2e}
+.demo-dot:nth-child(3){background:#28c840}
+.demo-url{
+  flex:1;background:rgba(255,255,255,0.05);
+  border-radius:6px;padding:0.25rem 0.75rem;
+  font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);
+  margin:0 0.5rem;
+}
+.demo-body{padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.chat-row{display:flex;gap:12px;align-items:flex-start}
+.chat-row.right{flex-direction:row-reverse}
+.avatar{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:600;
+}
+.av-user{background:rgba(124,111,255,0.2);color:var(--accent)}
+.av-ai{background:rgba(56,232,160,0.15);color:var(--accent2)}
+.bubble{
+  background:var(--surface2);border:0.5px solid var(--border);
+  border-radius:12px;padding:0.625rem 0.875rem;
+  font-size:0.875rem;line-height:1.5;max-width:80%;
+}
+.bubble.user{background:rgba(124,111,255,0.12);border-color:rgba(124,111,255,0.2)}
+.summary-box{
+  background:linear-gradient(135deg,rgba(56,232,160,0.07),rgba(124,111,255,0.07));
+  border:0.5px solid rgba(56,232,160,0.25);
+  border-radius:12px;padding:1rem 1.25rem;
+  font-size:0.8125rem;
+}
+.summary-header{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:0.5rem;color:var(--accent2);font-weight:500;font-size:0.75rem;
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+.summary-text{color:rgba(240,238,255,0.8);line-height:1.6}
+
+/* STATS */
+.stats-row{
+  display:flex;justify-content:center;gap:0;
+  max-width:600px;margin:0 auto;
+  border:0.5px solid var(--border);border-radius:12px;
+  overflow:hidden;
+}
+.stat-item{
+  flex:1;padding:1.5rem;text-align:center;
+  border-right:0.5px solid var(--border);
+}
+.stat-item:last-child{border-right:none}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;
+  color:var(--accent);display:block;
+}
+.stat-label{font-size:0.8125rem;color:var(--muted)}
+
+/* SECTION */
+section{padding:6rem 2rem}
+.section-label{
+  font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;
+  color:var(--accent);font-weight:500;margin-bottom:0.75rem;
+}
+.section-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:clamp(1.75rem,3.5vw,2.75rem);
+  letter-spacing:-0.02em;margin-bottom:1rem;
+}
+.section-sub{color:var(--muted);max-width:480px;line-height:1.7}
+.container{max-width:1000px;margin:0 auto}
+
+/* HOW IT WORKS */
+.how-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:16px;
+  overflow:hidden;margin-top:3rem;
+}
+.how-card{
+  background:var(--bg);padding:2rem 1.5rem;position:relative;
+}
+.how-num{
+  font-family:'DM Mono',monospace;font-size:0.75rem;
+  color:var(--muted);margin-bottom:1rem;
+}
+.how-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;margin-bottom:1rem;
+}
+.how-card h3{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;
+  margin-bottom:0.5rem;
+}
+.how-card p{font-size:0.875rem;color:var(--muted);line-height:1.6}
+
+/* FEATURES */
+.feature-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1rem;margin-top:3rem;
+}
+.feature-card{
+  background:var(--surface);border:0.5px solid var(--border);
+  border-radius:14px;padding:1.5rem;
+  transition:border-color 0.2s;
+}
+.feature-card:hover{border-color:rgba(124,111,255,0.35)}
+.feature-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:0.25rem 0.75rem;border-radius:999px;
+  font-size:0.7rem;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;
+  margin-bottom:1rem;
+}
+.chip-purple{background:rgba(124,111,255,0.12);color:var(--accent)}
+.chip-green{background:rgba(56,232,160,0.1);color:var(--accent2)}
+.chip-blue{background:rgba(80,150,255,0.1);color:#5096ff}
+.feature-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:0.5rem}
+.feature-card p{font-size:0.875rem;color:var(--muted);line-height:1.6}
+
+/* CODE BLOCK */
+.code-block{
+  background:var(--surface2);border:0.5px solid var(--border);
+  border-radius:12px;padding:1.25rem 1.5rem;
+  font-family:'DM Mono',monospace;font-size:0.8125rem;
+  line-height:1.7;color:rgba(240,238,255,0.7);
+  overflow-x:auto;margin-top:2rem;
+}
+.code-block .kw{color:#7c6fff}
+.code-block .str{color:#38e8a0}
+.code-block .cm{color:#4a475e}
+
+/* TECH STACK */
+.tech-row{
+  display:flex;flex-wrap:wrap;gap:0.625rem;margin-top:2rem;
+}
+.tech-pill{
+  background:var(--surface2);border:0.5px solid var(--border);
+  border-radius:999px;padding:0.375rem 1rem;
+  font-size:0.8125rem;color:var(--text);
+}
+
+/* ROADMAP */
+.roadmap{margin-top:2.5rem;display:flex;flex-direction:column;gap:0}
+.roadmap-item{
+  display:flex;gap:1.5rem;
+  padding:1.25rem 0;
+  border-bottom:0.5px solid rgba(255,255,255,0.05);
+}
+.roadmap-item:last-child{border-bottom:none}
+.rm-status{
+  width:80px;flex-shrink:0;
+  font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;
+  padding-top:2px;
+}
+.rm-done{color:var(--accent2)}
+.rm-next{color:var(--accent)}
+.rm-future{color:var(--muted)}
+.rm-content h4{font-weight:500;font-size:0.9375rem;margin-bottom:0.25rem}
+.rm-content p{font-size:0.8125rem;color:var(--muted)}
+
+/* INSTALL */
+.install-section{
+  background:var(--surface);
+  border:0.5px solid var(--border);border-radius:20px;
+  padding:3rem;text-align:center;
+  max-width:640px;margin:0 auto;
+}
+.install-section h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(1.5rem,3vw,2.25rem);
+  letter-spacing:-0.02em;margin-bottom:0.75rem;
+}
+.install-section p{color:var(--muted);margin-bottom:2rem}
+.install-steps{
+  display:flex;flex-direction:column;gap:0.75rem;
+  text-align:left;margin-bottom:2rem;
+}
+.install-step{
+  display:flex;align-items:flex-start;gap:1rem;
+  background:var(--surface2);border-radius:10px;padding:0.875rem 1rem;
+}
+.step-n{
+  width:24px;height:24px;border-radius:50%;
+  background:rgba(124,111,255,0.15);border:0.5px solid rgba(124,111,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:600;color:var(--accent);flex-shrink:0;
+}
+.install-step p{font-size:0.875rem;color:var(--text);margin:0;line-height:1.5}
+.install-step code{
+  font-family:'DM Mono',monospace;font-size:0.8em;
+  color:var(--accent2);background:rgba(56,232,160,0.08);
+  padding:1px 5px;border-radius:4px;
+}
+
+/* FOOTER */
+footer{
+  border-top:0.5px solid var(--border);
+  padding:2rem;text-align:center;
+  font-size:0.8125rem;color:var(--muted);
+}
+footer span{color:var(--accent)}
+
+/* DIVIDER */
+.divider{border:none;border-top:0.5px solid var(--border);margin:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero>*{animation:fadeUp 0.6s ease both}
+.hero .badge{animation-delay:0.1s}
+.hero h1{animation-delay:0.2s}
+.hero .hero-sub{animation-delay:0.3s}
+.hero .hero-btns{animation-delay:0.4s}
+.hero .demo-wrap{animation-delay:0.5s}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">LLM <span>Bridge</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#install">Install</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:0.5rem;">
+    <div class="user-profile" id="userProfile" style="display:none;position:relative">
+      <button class="profile-toggle" aria-haspopup="true" aria-expanded="false" style="display:flex;align-items:center;gap:0.5rem;background:transparent;border:none;cursor:pointer;color:inherit">
+        <div class="user-avatar" aria-hidden="true"></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start">
+          <span class="user-email"></span>
+        </div>
+      </button>
+      <div class="profile-dropdown" style="display:none;position:absolute;right:0;top:48px;background:var(--surface);border:0.5px solid var(--border);padding:0.75rem;border-radius:10px;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,0.5);z-index:200">
+        <div class="profile-info" style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.5rem">
+          <div class="dropdown-avatar" style="width:40px;height:40px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--text)"></div>
+          <div>
+            <div class="dropdown-email" style="font-size:0.9rem;color:var(--text)"></div>
+            <div class="dropdown-verif verif-badge" style="display:none;margin-top:4px"></div>
+          </div>
+        </div>
+        <div class="dropdown-actions" style="display:flex;flex-direction:column;gap:0.5rem">
+          <button class="btn-resend-verif" style="display:none;padding:0.5rem;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);cursor:pointer">Resend verification</button>
+          <button class="btn-logout" style="padding:0.5rem;border-radius:8px;border:none;background:#e63946;color:#fff;cursor:pointer">Log out</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn-signup">Sign up</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="badge"><span class="badge-dot"></span>Powered by Llama 3.2 — runs 100% local</div>
+  <h1>Give your AI chats a <span class="accent">memory</span> that <span class="accent2">actually works</span></h1>
+  <p class="hero-sub">LLM Bridge summarizes your full conversations using a local LLM — no cloud, no API keys, no token limits. Your data never leaves your machine.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="window.open('https://github.com/roy-gunjan743/LLM-BRIDGE/blob/main/README.md', '_blank')">⬇ Add to Chrome — it's free</button>
+    <button class="btn-ghost" onclick="window.open('https://github.com/roy-gunjan743/LLM-BRIDGE.git', '_blank')">View on GitHub →</button>
+  </div>
+  <div class="demo-wrap">
+    <div class="demo-window">
+      <div class="demo-bar">
+        <div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div>
+        <div class="demo-url">chatgpt.com/c/long-conversation-abc123</div>
+      </div>
+      <div class="demo-body">
+        <div class="chat-row right">
+          <div class="avatar av-user">You</div>
+          <div class="bubble user">Can you help me set up a Kubernetes cluster with auto-scaling and Prometheus monitoring?</div>
+        </div>
+        <div class="chat-row">
+          <div class="avatar av-ai">AI</div>
+          <div class="bubble">Sure! Let's start with the cluster setup. First, you'll need to configure your node pools...</div>
+        </div>
+        <div class="summary-box">
+          <div class="summary-header">✦ LLM Bridge Summary — 3,847 words → 4 sentences</div>
+          <div class="summary-text">User set up a Kubernetes cluster with 3 worker nodes, enabled HPA for auto-scaling with CPU threshold at 70%, integrated Prometheus + Grafana for monitoring, and resolved a persistent volume claim issue by adjusting storage class annotations. Final stack is production-ready.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section style="padding:3rem 2rem">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-num">100%</span><div class="stat-label">Local & private</div></div>
+      <div class="stat-item"><span class="stat-num">∞</span><div class="stat-label">Conversation length</div></div>
+      <div class="stat-item"><span class="stat-num">4k</span><div class="stat-label">Chars per chunk</div></div>
+      <div class="stat-item"><span class="stat-num">0</span><div class="stat-label">Cloud API calls</div></div>
+    </div>
+  </div>
+</section>
+
+
+<script src="firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script>
+  (function(){
+    if(!window.__FIREBASE_CONFIG){ console.warn('firebase-config.js missing; copy config from Firebase console.'); return; }
+    if(!firebase.apps.length) firebase.initializeApp(window.__FIREBASE_CONFIG);
+    // Persist auth state across sessions
+    try{ firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){ console.warn('setPersistence failed', e); }
+
+    // Check if user is logged in - if not, redirect to login page
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        // User not logged in - redirect to login page
+        window.location.href = 'index.html';
+      }
+    });
+
+    function updateUI(logged){
+      const signup = document.querySelector('.btn-signup');
+      const logout = document.querySelector('.btn-logout');
+      if(signup) signup.style.display = logged ? 'none' : 'inline-flex';
+      if(logout) logout.style.display = logged ? 'inline-flex' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const signup = document.querySelector('.btn-signup');
+      if(signup) signup.addEventListener('click', ()=>{ window.location.href = 'memex_login_page.html'; });
+
+      const profile = document.querySelector('#userProfile');
+      const profileToggle = profile && profile.querySelector('.profile-toggle');
+      const dropdown = profile && profile.querySelector('.profile-dropdown');
+      const dropdownAvatar = profile && profile.querySelector('.dropdown-avatar');
+      const dropdownEmail = profile && profile.querySelector('.dropdown-email');
+      const dropdownVerif = profile && profile.querySelector('.dropdown-verif');
+      const resendBtn = profile && profile.querySelector('.btn-resend-verif');
+      const logoutBtn = profile && profile.querySelector('.btn-logout');
+
+      function setAvatarAndInitials(user){
+        const nameOrEmail = (user.displayName || user.email || 'User');
+        const initials = nameOrEmail.split('@')[0].slice(0,2).toUpperCase();
+        if(dropdownAvatar){
+          // if photoURL available, set as background image
+          if(user.photoURL){
+            dropdownAvatar.style.backgroundImage = `url(${user.photoURL})`;
+            dropdownAvatar.style.backgroundSize = 'cover';
+            dropdownAvatar.textContent = '';
+          } else {
+            dropdownAvatar.style.backgroundImage = 'none';
+            dropdownAvatar.textContent = initials;
+          }
+        }
+      }
+
+      function closeDropdown(){ if(dropdown){ dropdown.style.display = 'none'; if(profileToggle) profileToggle.setAttribute('aria-expanded','false'); } }
+      function openDropdown(){ if(dropdown){ dropdown.style.display = 'block'; if(profileToggle) profileToggle.setAttribute('aria-expanded','true'); } }
+
+      // Toggle dropdown when clicking profile
+      if(profileToggle){
+        profileToggle.addEventListener('click', (e)=>{
+          e.stopPropagation();
+          if(!dropdown) return;
+          dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+          const expanded = dropdown.style.display === 'block';
+          profileToggle.setAttribute('aria-expanded', String(expanded));
+        });
+      }
+
+      // Close dropdown on outside click
+      document.addEventListener('click', (e)=>{
+        if(!profile) return;
+        if(!profile.contains(e.target)) closeDropdown();
+      });
+
+      // Listen for auth state changes to populate profile
+      firebase.auth().onAuthStateChanged(user=>{
+        const logged = !!user;
+        updateUI(logged);
+        if(!user){
+          if(profile) profile.style.display = 'none';
+          return;
+        }
+        if(profile) profile.style.display = 'flex';
+        if(dropdownEmail) dropdownEmail.textContent = user.email || '';
+        if(dropdownVerif){
+          if(user.emailVerified){ dropdownVerif.style.display = 'inline-block'; dropdownVerif.textContent = 'Verified'; dropdownVerif.style.background = 'rgba(124,111,255,0.12)'; }
+          else { dropdownVerif.style.display = 'inline-block'; dropdownVerif.textContent = 'Unverified'; }
+        }
+        if(resendBtn){ resendBtn.style.display = user.emailVerified ? 'none' : 'inline-block'; resendBtn.onclick = ()=>{ user.sendEmailVerification().then(()=>{ alert('Verification email sent.'); }).catch(e=>{ alert(e.message); }); }; }
+        if(logoutBtn) logoutBtn.onclick = ()=>{ firebase.auth().signOut(); };
+        // set avatars (dropdown and small header avatar)
+        setAvatarAndInitials(user);
+        const smallAvatar = profile && profile.querySelector('.user-avatar');
+        if(smallAvatar){
+          if(user.photoURL){ smallAvatar.style.backgroundImage = `url(${user.photoURL})`; smallAvatar.style.backgroundSize = 'cover'; smallAvatar.textContent = ''; }
+          else { smallAvatar.style.backgroundImage = 'none'; smallAvatar.textContent = (user.displayName||user.email||'U').toString().split('@')[0].slice(0,2).toUpperCase(); }
+        }
+      });
+
+    });
+  })();
+</script>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label">How it works</div>
+    <div class="section-title">Four steps, zero cloud</div>
+    <p class="section-sub">The entire pipeline runs locally. Ollama serves Llama 3.2 from your machine — your conversations are never uploaded anywhere.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <div class="how-icon" style="background:rgba(124,111,255,0.1)">🔍</div>
+        <h3>Extract</h3>
+        <p>Content script injects into the active tab and extracts the full message thread from the DOM.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <div class="how-icon" style="background:rgba(56,232,160,0.1)">✂️</div>
+        <h3>Chunk</h3>
+        <p>Long conversations are split into 4,000-character chunks to fit within the LLM's context window.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <div class="how-icon" style="background:rgba(80,150,255,0.1)">🧠</div>
+        <h3>Summarize</h3>
+        <p>Each chunk is sent to the background service worker, which calls Llama 3.2 via Ollama's local API.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">04</div>
+        <div class="how-icon" style="background:rgba(255,180,0,0.1)">📝</div>
+        <h3>Combine</h3>
+        <p>Per-chunk summaries are merged into one final summary and displayed in the popup — ready to copy or export.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <div class="section-title">Everything you need,<br>nothing you don't</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-chip chip-purple">Privacy</div>
+        <h3>Fully local LLM</h3>
+        <p>Llama 3.2 runs on your own hardware via Ollama. Zero data leaves your machine — not even metadata.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-chip chip-green">Performance</div>
+        <h3>Chunked summarization</h3>
+        <p>Splits any conversation length into manageable chunks, summarizes each, then merges into a coherent final output.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-chip chip-blue">Architecture</div>
+        <h3>Service worker backend</h3>
+        <p>Non-blocking background processing keeps the browser UI snappy while LLM inference runs in parallel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-chip chip-purple">Compatibility</div>
+        <h3>Works on any chat UI</h3>
+        <p>Content script injection works with ChatGPT, Claude, Gemini, and any chat interface with a DOM you can read.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-chip chip-green">Extensible</div>
+        <h3>AI memory foundation</h3>
+        <p>Built as a cross-context memory layer — summaries can feed into future Claude, Gemini, or custom model sessions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-chip chip-blue">Open source</div>
+        <h3>MIT licensed</h3>
+        <p>The full source is on GitHub. Fork it, modify it, ship it. No telemetry, no hidden API calls, no surprises.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TECH + CODE -->
+<section>
+  <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
+    <div>
+      <div class="section-label">Tech stack</div>
+      <div class="section-title" style="font-size:1.75rem">Built on solid foundations</div>
+      <p class="section-sub" style="margin-bottom:1.5rem">No React, no build step, no bundler. Just a lean Chrome Extension Manifest V3 that does exactly one job extremely well.</p>
+      <div class="tech-row">
+        <span class="tech-pill">Chrome Extension MV3</span>
+        <span class="tech-pill">Service Worker</span>
+        <span class="tech-pill">Content Scripts</span>
+        <span class="tech-pill">Ollama</span>
+        <span class="tech-pill">Llama 3.2</span>
+        <span class="tech-pill">Manifest Permissions</span>
+        <span class="tech-pill">Cross-origin messaging</span>
+        <span class="tech-pill">Chunked inference</span>
+      </div>
+    </div>
+    <div>
+      <div class="code-block">
+<span class="cm">// popup.js — chunked summarization</span><br>
+<span class="kw">async function</span> summarizeChat(text) {<br>
+&nbsp;&nbsp;<span class="kw">const</span> chunks = chunkText(text, <span class="str">4000</span>);<br>
+&nbsp;&nbsp;<span class="kw">const</span> summaries = [];<br><br>
+&nbsp;&nbsp;<span class="kw">for</span> (<span class="kw">const</span> chunk <span class="kw">of</span> chunks) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">const</span> res = <span class="kw">await</span> callLlama(chunk);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;summaries.push(res);<br>
+&nbsp;&nbsp;}<br><br>
+&nbsp;&nbsp;<span class="cm">// merge all chunk summaries</span><br>
+&nbsp;&nbsp;<span class="kw">return</span> <span class="kw">await</span> callLlama(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">`Combine: ${summaries.join(" ")}`</span><br>
+&nbsp;&nbsp;);<br>
+}
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container" style="max-width:680px">
+    <div class="section-label">Roadmap</div>
+    <div class="section-title">What's coming next</div>
+    <div class="roadmap">
+      <div class="roadmap-item">
+        <div class="rm-status rm-done">✓ Done</div>
+        <div class="rm-content"><h4>Chunked LLM summarization</h4><p>Split → summarize → merge pipeline fully working with Llama 3.2.</p></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="rm-status rm-done">✓ Done</div>
+        <div class="rm-content"><h4>Ollama cross-origin fix</h4><p>Environment variable config to allow Chrome extension access to local Ollama server.</p></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="rm-status rm-next">→ Next</div>
+        <div class="rm-content"><h4>Export as Markdown</h4><p>One-click export of any summary to a clean .md file, ready to paste anywhere.</p></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="rm-status rm-next">→ Next</div>
+        <div class="rm-content"><h4>Memory history</h4><p>Persist past summaries locally so you can browse and search your entire chat history.</p></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="rm-status rm-future">· Future</div>
+        <div class="rm-content"><h4>Transfer to Claude / Gemini</h4><p>Inject stored summaries as context when starting a new session on another AI platform.</p></div>
+      </div>
+      <div class="roadmap-item">
+        <div class="rm-status rm-future">· Future</div>
+        <div class="rm-content"><h4>Chrome Web Store release</h4><p>Publish as an official extension for one-click installation without developer mode.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INSTALL -->
+<section id="install" style="padding:5rem 2rem">
+  <div class="install-section">
+    <h2>Get started in 5 minutes</h2>
+    <p>You need Ollama running locally with Llama 3.2 pulled. Then load the extension — done.</p>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="step-n">1</div>
+        <p>Install Ollama and run <code>ollama pull llama3.2</code> to download the model.</p>
+      </div>
+      <div class="install-step">
+        <div class="step-n">2</div>
+        <p>Set the env var: <code>OLLAMA_ORIGINS=chrome-extension://*</code> and restart Ollama.</p>
+      </div>
+      <div class="install-step">
+        <div class="step-n">3</div>
+        <p>Clone the repo, then load the folder as an unpacked extension in <code>chrome://extensions</code>.</p>
+      </div>
+      <div class="install-step">
+        <div class="step-n">4</div>
+        <p>Open any chat, click the LLM Bridge icon, hit <strong>Summarize</strong> — and watch the magic happen.</p>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin:0 auto" onclick="window.open('https://github.com/roy-gunjan743/LLM-BRIDGE.git', '_blank')">⬇ Download ZIP from GitHub</button>
+  </div>
+</section>
+
+<footer>
+  Built with ❤️ and <span>Llama 3.2</span> · MIT License · Your data stays on your machine · Always.
+</footer>
+
+</body>
+</html>
